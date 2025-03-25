@@ -228,4 +228,8 @@ if __name__ == '__main__':
     # Create static directory if it doesn't exist
     os.makedirs('static', exist_ok=True)
     
-    app.run(host='0.0.0.0', port=8080, debug=True)
+    # Get port from environment variable for production or use 5000 for local development
+    port = int(os.environ.get('PORT', 5000))
+    # Set debug to False in production
+    debug = os.environ.get('FLASK_ENV') == 'development'
+    app.run(host='0.0.0.0', port=port, debug=debug)
