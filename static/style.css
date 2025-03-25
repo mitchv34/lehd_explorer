@@ -1,0 +1,133 @@
+/* Main Styles */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    border: none;
+}
+
+.card-header {
+    border-radius: 8px 8px 0 0 !important;
+}
+
+/* Table Styles */
+#resultsTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#resultsTable th {
+    background-color: #f0f0f0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+#resultsTable tbody tr {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#resultsTable tbody tr:hover {
+    background-color: #e9f5ff !important;
+}
+
+#resultsTable tbody tr.selected {
+    background-color: #cce5ff !important;
+}
+
+/* Details Panel Styles */
+.detail-category {
+    font-weight: bold;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    color: #0d6efd;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 5px;
+}
+
+.detail-item {
+    margin-left: 15px;
+    margin-bottom: 3px;
+}
+
+.detail-badge {
+    display: inline-block;
+    padding: 0.25em 0.6em;
+    font-size: 0.75em;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.25rem;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .col-md-3, .col-md-9 {
+        padding: 0 5px;
+    }
+    
+    .card {
+        margin-bottom: 10px;
+    }
+}
+
+/* Loading indicator */
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+}
+
+.loading::after {
+    content: "";
+    width: 40px;
+    height: 40px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #0d6efd;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Status indicators */
+.status-indicator {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+    border-radius: 50%;
+    font-weight: bold;
+}
+
+.status-yes {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-no {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Tooltip styles */
+.tooltip-inner {
+    max-width: 300px;
+    padding: 10px;
+    background-color: #343a40;
+    font-size: 14px;
+}

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEHD Aggregation Level Explorer</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container-fluid">
+        <header class="bg-primary text-white p-3 mb-4">
+            <h1 class="text-center">LEHD Aggregation Level Explorer</h1>
+            <p class="text-center mb-0">Explore Census Bureau's LEHD program aggregation levels</p>
+        </header>
+
+        <div class="row">
+            <!-- Filter Panel -->
+            <div class="col-md-3">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Filter Options</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="filterForm">
+                            <!-- Data Type Filter -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Data Type</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="j2j" name="j2j" checked>
+                                    <label class="form-check-label" for="j2j">J2J (Job-to-Job)</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="j2jr" name="j2jr" checked>
+                                    <label class="form-check-label" for="j2jr">J2JR (Job-to-Job Rates)</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="j2jod" name="j2jod" checked>
+                                    <label class="form-check-label" for="j2jod">J2JOD (Origin-Destination)</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="qwi" name="qwi" checked>
+                                    <label class="form-check-label" for="qwi">QWI (Quarterly Workforce Indicators)</label>
+                                </div>
+                            </div>
+
+                            <!-- Component-based Filtering -->
+                            <div class="accordion" id="filterAccordion">
+                                <!-- Worker Characteristics Components -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="workerComponentsHeading">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#workerComponentsCollapse" aria-expanded="false" aria-controls="workerComponentsCollapse">
+                                            Worker Characteristics
+                                        </button>
+                                    </h2>
+                                    <div id="workerComponentsCollapse" class="accordion-collapse collapse" aria-labelledby="workerComponentsHeading" data-bs-parent="#filterAccordion">
+                                        <div class="accordion-body">
+                                            {% for component in worker_components %}
+                                            <div class="form-check">
+                                                <input class="form-check-input worker-component" type="checkbox" id="worker_{{ component|replace(' ', '_') }}" name="worker_components" value="{{ component }}">
+                                                <label class="form-check-label" for="worker_{{ component|replace(' ', '_') }}">{{ component }}</label>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Firm Characteristics Components -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="firmComponentsHeading">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#firmComponentsCollapse" aria-expanded="false" aria-controls="firmComponentsCollapse">
+                                            Firm Characteristics
+                                        </button>
+                                    </h2>
+                                    <div id="firmComponentsCollapse" class="accordion-collapse collapse" aria-labelledby="firmComponentsHeading" data-bs-parent="#filterAccordion">
+                                        <div class="accordion-body">
+                                            {% for component in firm_components %}
+                                            <div class="form-check">
+                                                <input class="form-check-input firm-component" type="checkbox" id="firm_{{ component|replace(' ', '_') }}" name="firm_components" value="{{ component }}">
+                                                <label class="form-check-label" for="firm_{{ component|replace(' ', '_') }}">{{ component }}</label>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Firm Origin Characteristics Components -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="firmOrigComponentsHeading">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#firmOrigComponentsCollapse" aria-expanded="false" aria-controls="firmOrigComponentsCollapse">
+                                            Firm Origin Characteristics
+                                        </button>
+                                    </h2>
+                                    <div id="firmOrigComponentsCollapse" class="accordion-collapse collapse" aria-labelledby="firmOrigComponentsHeading" data-bs-parent="#filterAccordion">
+                                        <div class="accordion-body">
+                                            {% for component in firm_orig_components %}
+                                            <div class="form-check">
+                                                <input class="form-check-input firm-orig-component" type="checkbox" id="firm_orig_{{ component|replace(' ', '_') }}" name="firm_orig_components" value="{{ component }}">
+                                                <label class="form-check-label" for="firm_orig_{{ component|replace(' ', '_') }}">{{ component }}</label>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Geographic Level Filter -->
+                            <div class="mb-3">
+                                <label for="geoLevel" class="form-label fw-bold">Geographic Level</label>
+                                <select class="form-select" id="geoLevel" name="geo_level">
+                                    {% for level in geo_levels %}
+                                    <option value="{{ level }}">
+                                        {% if level != 'All' %}
+                                            {{ geo_mapping[level] }} ({{ level }})
+                                        {% else %}
+                                            {{ level }}
+                                        {% endif %}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Industry Level Filter -->
+                            <div class="mb-3">
+                                <label for="indLevel" class="form-label fw-bold">Industry Level</label>
+                                <select class="form-select" id="indLevel" name="ind_level">
+                                    {% for level in ind_levels %}
+                                    <option value="{{ level }}">
+                                        {% if level != 'All' %}
+                                            {{ ind_mapping[level] }} ({{ level }})
+                                        {% else %}
+                                            {{ level }}
+                                        {% endif %}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Search -->
+                            <div class="mb-3">
+                                <label for="search" class="form-label fw-bold">Search</label>
+                                <input type="text" class="form-control" id="search" name="search" placeholder="Search...">
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">Apply Filters</button>
+                                <button type="button" id="resetBtn" class="btn btn-secondary">Reset Filters</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Help Card -->
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">Help</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6>Component-Based Filtering:</h6>
+                        <p>Select individual components to find all aggregation levels containing those components.</p>
+                        
+                        <h6>Geographic Levels:</h6>
+                        <ul>
+                            <li><strong>N</strong>: National</li>
+                            <li><strong>S</strong>: State</li>
+                            <li><strong>B</strong>: Metro/Micropolitan</li>
+                        </ul>
+                        
+                        <h6>Industry Levels:</h6>
+                        <ul>
+                            <li><strong>A</strong>: All Industries</li>
+                            <li><strong>S</strong>: NAICS Sectors</li>
+                            <li><strong>3</strong>: NAICS Subsectors</li>
+                        </ul>
+                        
+                        <p>Click on a row in the results table to see more details.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9">
+                <!-- Results Panel -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Aggregation Levels</h5>
+                        <span id="resultCount" class="badge bg-light text-dark">Found: 0 records</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover" id="resultsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Agg Level</th>
+                                        <th>Worker Char</th>
+                                        <th>Firm Char</th>
+                                        <th>Firm Origin Char</th>
+                                        <th>Geo Level</th>
+                                        <th>Ind Level</th>
+                                        <th>J2J</th>
+                                        <th>J2JR</th>
+                                        <th>J2JOD</th>
+                                        <th>QWI</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="resultsBody">
+                                    <!-- Results will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Details Panel -->
+                <div class="card" id="detailsCard" style="display: none;">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0" id="detailsTitle">Aggregation Level Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="detailsContent">
+                            <!-- Details will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
