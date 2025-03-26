@@ -137,6 +137,58 @@
                                 </select>
                             </div>
 
+                            <!-- Origin Geographic Level Filter -->
+                            <div class="mb-3">
+                                <label for="geoLevelOrig" class="form-label fw-bold">Origin Geographic Level</label>
+                                <select class="form-select" id="geoLevelOrig" name="geo_level_orig">
+                                    {% for level in geo_levels_orig %}
+                                    <option value="{{ level }}">
+                                        {% if level != 'All' %}
+                                            {{ geo_mapping[level] }} ({{ level }})
+                                        {% else %}
+                                            {{ level }}
+                                        {% endif %}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Origin Industry Level Filter -->
+                            <div class="mb-3">
+                                <label for="indLevelOrig" class="form-label fw-bold">Origin Industry Level</label>
+                                <select class="form-select" id="indLevelOrig" name="ind_level_orig">
+                                    {% for level in ind_levels_orig %}
+                                    <option value="{{ level }}">
+                                        {% if level != 'All' %}
+                                            {{ ind_mapping[level] }} ({{ level }})
+                                        {% else %}
+                                            {{ level }}
+                                        {% endif %}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Owner Code Filter -->
+                            <div class="mb-3">
+                                <label for="ownerCode" class="form-label fw-bold">Owner Code</label>
+                                <select class="form-select" id="ownerCode" name="owner_code">
+                                    <option value="All">All</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+                                </select>
+                            </div>
+
+                            <!-- Owner Code Origin Filter -->
+                            <div class="mb-3">
+                                <label for="ownerCodeOrig" class="form-label fw-bold">Owner Code Origin</label>
+                                <select class="form-select" id="ownerCodeOrig" name="owner_code_orig">
+                                    <option value="All">All</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+                                </select>
+                            </div>
+
                             <!-- Search -->
                             <div class="mb-3">
                                 <label for="search" class="form-label fw-bold">Search</label>

@@ -69,6 +69,8 @@ def index():
     # Get unique values for dropdowns
     geo_levels = ['All'] + sorted(df['geo_level'].unique().tolist())
     ind_levels = ['All'] + sorted(df['ind_level'].unique().tolist())
+    geo_levels_orig = ['All'] + sorted(df['geo_level_orig'].unique().tolist())
+    ind_levels_orig = ['All'] + sorted(df['ind_level_orig'].unique().tolist())
     
     # Get components for checkbox filtering
     components = extract_components(df)
@@ -81,6 +83,8 @@ def index():
                         'index.html', 
                         geo_levels=geo_levels,
                         ind_levels=ind_levels,
+                        geo_levels_orig=geo_levels_orig,
+                        ind_levels_orig=ind_levels_orig,
                         geo_mapping=geo_mapping,
                         ind_mapping=ind_mapping,
                         worker_components=components['worker_components'],
@@ -146,6 +150,22 @@ def get_data():
     if filters.get('ind_level') != 'All':
         filtered_df = filtered_df[filtered_df['ind_level'] == filters.get('ind_level')]
     
+    # Origin geographic level filter
+    if filters.get('geo_level_orig') != 'All':
+        filtered_df = filtered_df[filtered_df['geo_level_orig'] == filters.get('geo_level_orig')]
+    
+    # Origin industry level filter
+    if filters.get('ind_level_orig') != 'All':
+        filtered_df = filtered_df[filtered_df['ind_level_orig'] == filters.get('ind_level_orig')]
+    
+    # Owner code filter
+    if filters.get('owner_code') != 'All':
+        filtered_df = filtered_df[filtered_df['by_ownercode'] == (1 if filters.get('owner_code') == 'Yes' else 0)]
+    
+    # Owner code origin filter
+    if filters.get('owner_code_orig') != 'All':
+        filtered_df = filtered_df[filtered_df['by_ownercode_orig'] == (1 if filters.get('owner_code_orig') == 'Yes' else 0)]
+    
     # Search filter
     if filters.get('search'):
         search_term = filters.get('search').lower()
@@ -180,18 +200,21 @@ def get_details(agg_level):
         'Firm Characteristics': ['by_firmage', 'by_firmsize', 'by_ownercode'],
         'Geographic Level': ['geo_level'],
         'Industry Level': ['ind_level'],
+        'Origin Geographic Level': ['geo_level_orig'],
+        'Origin Industry Level': ['ind_level_orig'],
+        'Origin Firm Characteristics': ['by_ownercode_orig', 'by_firmage_orig', 'by_firmsize_orig'],
         'Data Types': ['j2j', 'j2jr', 'j2jod', 'qwi']
     }
     
     # Create a dictionary to store values for each category
     category_values = {}
     for category, columns in categories.items():
-        if category == 'Geographic Level':
+        if category in ['Geographic Level', 'Origin Geographic Level']:
             geo_mapping = {'N': 'National', 'S': 'State', 'B': 'Metro/Micropolitan'}
-            category_values[category] = geo_mapping.get(row_dict['geo_level'], row_dict['geo_level'])
-        elif category == 'Industry Level':
+            category_values[category] = geo_mapping.get(row_dict[columns[0]], row_dict[columns[0]])
+        elif category in ['Industry Level', 'Origin Industry Level']:
             ind_mapping = {'A': 'All Industries', 'S': 'NAICS Sectors', '3': 'NAICS Subsectors'}
-            category_values[category] = ind_mapping.get(row_dict['ind_level'], row_dict['ind_level'])
+            category_values[category] = ind_mapping.get(row_dict[columns[0]], row_dict[columns[0]])
         elif category == 'Data Types':
             data_types = []
             if row_dict['j2j'] == 1:
@@ -213,7 +236,7 @@ def get_details(agg_level):
         'agg_level': int(row_dict['agg_level']),
         'worker_char': row_dict['worker_char'],
         'firm_char': row_dict['firm_char'],
-        'firm_orig_char': row_dict['firm_orig_char'],
+        'firm_orig_char': row_dict['firm_orig_char']
     }
     
     return jsonify({

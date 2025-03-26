@@ -33,6 +33,10 @@ function fetchData() {
         qwi: formData.get('qwi') === 'on',
         geo_level: formData.get('geo_level'),
         ind_level: formData.get('ind_level'),
+        geo_level_orig: formData.get('geo_level_orig'),
+        ind_level_orig: formData.get('ind_level_orig'),
+        owner_code: formData.get('owner_code'),
+        owner_code_orig: formData.get('owner_code_orig'),
         search: formData.get('search')
     };
     
@@ -185,6 +189,20 @@ function fetchDetails(aggLevel) {
         html += '<div class="detail-category">Industry Level</div>';
         html += `<div class="detail-item"><span class="detail-badge bg-warning text-dark">${data.categories['Industry Level']}</span></div>`;
         
+        // Origin Geographic Level
+        html += '<div class="detail-category">Origin Geographic Level</div>';
+        html += `<div class="detail-item"><span class="detail-badge bg-info text-white">${data.categories['Origin Geographic Level']}</span></div>`;
+        
+        // Origin Industry Level
+        html += '<div class="detail-category">Origin Industry Level</div>';
+        html += `<div class="detail-item"><span class="detail-badge bg-warning text-dark">${data.categories['Origin Industry Level']}</span></div>`;
+        
+        // Origin Firm Characteristics
+        html += '<div class="detail-category">Origin Firm Characteristics</div>';
+        data.categories['Origin Firm Characteristics'].forEach(item => {
+            html += `<div class="detail-item"><span class="detail-badge bg-success text-white">${item}</span></div>`;
+        });
+        
         // Data Types
         html += '<div class="detail-category">Data Types</div>';
         data.categories['Data Types'].forEach(item => {
@@ -228,6 +246,10 @@ function resetFilters() {
     // Reset dropdowns
     document.getElementById('geoLevel').value = 'All';
     document.getElementById('indLevel').value = 'All';
+    document.getElementById('geoLevelOrig').value = 'All';
+    document.getElementById('indLevelOrig').value = 'All';
+    document.getElementById('ownerCode').value = 'All';
+    document.getElementById('ownerCodeOrig').value = 'All';
     
     // Reset search
     document.getElementById('search').value = '';
